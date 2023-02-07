@@ -15,7 +15,8 @@ const addStudent = async (req, res) => {
           message: 'This Mobile or Email already Added!',
         });
       }else{
-      //  req.body.password = bcrypt.hashSync(req.body.password);
+       req.body.password = bcrypt.hashSync(req.body.password);
+      req.body.roleType ="PARENT";
         const newStudent= new Student(req.body);
         await newStudent.save();
         res.send({ message: 'Student Added Successfully!' });
@@ -27,7 +28,7 @@ const addStudent = async (req, res) => {
   };
   const loginStudent = async (req, res) => {
     try {
-      const student = await Student.findOne({ mobileNumber: req.body.mobileNumber });
+      const student = await Student.findOne({ email: req.body.email });
       if (student && bcrypt.compareSync(req.body.password, student.password)) {
         const token = signInToken(student);
         res.send({
@@ -36,6 +37,8 @@ const addStudent = async (req, res) => {
           name: student.orgName,
           phone: student.mobileNumber,
           email:student.email,
+          role:student.roleType,
+          schoolId:student.schooleId
         });
       } else {
         res.status(401).send({
@@ -63,8 +66,11 @@ const addStudent = async (req, res) => {
   const getAllStudent = async (req, res) => {
     try {
       let preparePost ={};
-      if(req.body.schooleId){
-        preparePost = {"schooleId" : ObjectId(req.body.schooleId)};
+      if(req.params.schooleId){
+        preparePost = {"schooleId" : ObjectId(req.params.schooleId)};
+      }
+      if(req.body.classId){
+        preparePost = {...preparePost,...{"classId" : ObjectId(req.body.classId)}}
       }
       const student = await Student.find(preparePost).populate("schooleId").populate("classTeacherId").populate("classId");
       res.send(student);
@@ -74,7 +80,6 @@ const addStudent = async (req, res) => {
       });
     }
   };
-
 const findStudentList=async(req, res)=>{
   let preparePost ={};
   if(req.body.schooleId){
@@ -110,6 +115,7 @@ const findStudentList=async(req, res)=>{
         student.parentName = req.body.parentName;
         student.mobileNumber = req.body.mobileNumber;
         student.email = req.body.email;
+      
         student.address=req.body.address;
         student.selectCity = req.body.selectCity;
         student.doa = req.body.doa;
@@ -139,6 +145,16 @@ const findStudentList=async(req, res)=>{
       }
     });
   };
+  const getByIdStudent = async (req, res) => {
+    try {
+      const student = await Student.findById(req.params.id);
+      res.send(student);
+    } catch (err) {
+      res.status(500).send({
+        message: err.message,
+      });
+    }
+  };
   module.exports = {
     addStudent,
      addAllStudent,
@@ -147,5 +163,6 @@ const findStudentList=async(req, res)=>{
     updateStudent,
     deleteStudent,
     findStudentList,
-    loginStudent
+    loginStudent,
+    getByIdStudent
   };

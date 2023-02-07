@@ -54,14 +54,14 @@ const addActivity = async (req, res) => {
       });
     }
   };
-
   const getAllActivity = async (req, res) => {
     try {
       let preparePost ={};
-      if(req.body.schooleId){
-        preparePost = {"schooleId" : ObjectId(req.body.schooleId)};
+      if(req.params.schooleId){
+        preparePost = {"schooleId" : ObjectId(req.params.schooleId)};
       }
-      const activity = await Activity.find(preparePost).populate("schooleId").populate("classId");
+      const activity = await Activity.find(preparePost).populate("schooleId")
+      .populate("classId").populate("studentId").populate("activityId").populate("subActivityId");
       res.send(activity);
     } catch (err) {
       res.status(500).send({
@@ -69,14 +69,22 @@ const addActivity = async (req, res) => {
       });
     }
   };
-
 const findActivityList=async(req, res)=>{
   let preparePost ={};
   if(req.body.schooleId){
     preparePost = {"schooleId" : ObjectId(req.body.schooleId)};
   }
+  if(req.body.classId){
+    preparePost = {...preparePost,...{"classId" : ObjectId(req.body.classId)}};
+  }
+  if(req.body.studentId){
+    preparePost = {...preparePost,...{"studentId" : ObjectId(req.body.studentId)}};
+  }
+  if(req.body.key){
+    preparePost = {...preparePost,...{"key" : (req.body.key)}};
+  }
   try {
-    const activity = await Activity.find(preparePost).populate("schooleId");
+    const activity = await Activity.find(preparePost).populate("schooleId").populate("classId").populate("studentId").populate("activityId").populate("subActivityId");
     res.send(activity);
   } catch (err) {
     res.status(500).send({
@@ -93,23 +101,26 @@ const findActivityList=async(req, res)=>{
         message: err.message,
       });
     }
-  };
+  };  
   const updateActivity = async (req, res) => {
     try {
       const activity = await Activity.findById(req.params.id);
+      console.log(activity)
       if (activity) {
         activity.schooleId = req.body.schooleId;
-        activity.status = req.body.status;
         activity.classId = req.body.classId;
-        activity.startDate = req.body.startDate;
-        activity.endDate = req.body.endDate;
+        activity.academicYear = req.body.academicYear;
+        activity.studentName = req.body.studentName;
         activity.activityName = req.body.activityName;
-        activity.description=req.body.description;
+        activity.subActivityName=req.body.subActivityName;
+        activity.remarks=req.body.remarks;
+        activity.key=req.body.key;
+        activity.authorizedPerson=req.body.authorizedPerson;
         await activity.save();
         res.send({ message: 'Activity Updated Successfully!' });
       }
     } catch (err) {
-      res.status(404).send({ message: 'Activity not found!' });
+      res.status(404).send({ message: err });
     }
   };
   const deleteActivity = (req, res) => {
@@ -125,7 +136,6 @@ const findActivityList=async(req, res)=>{
       }
     });
   };
-  
   module.exports = {
     addActivity,
      addAllActivity,

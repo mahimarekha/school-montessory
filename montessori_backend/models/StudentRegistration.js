@@ -15,9 +15,10 @@ const studentSchema = new mongoose.Schema(
             type: String,
             required: true,
         },
-        selectClass: {
-            type: String,
-            default: true,
+        classId: {
+            type: mongoose.Schema.Types.ObjectId,
+            ref: "Class",
+            required: true,
           },
           parentName: {
             type: String,
@@ -31,6 +32,10 @@ const studentSchema = new mongoose.Schema(
         email:{
             type: String,
             unique:true,
+            required: true,
+        },
+        password:{
+            type: String,
             required: true,
         },
         address:{
@@ -49,7 +54,10 @@ const studentSchema = new mongoose.Schema(
             type: String,
             required: true,
         },
-      
+        roleType:{
+            type: String,
+            required: true,
+        }
     },
     {
         timestamps: true,

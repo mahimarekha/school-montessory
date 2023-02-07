@@ -17,6 +17,7 @@ router.post('/find',isAuth, findRegistrationList);
 //get a coupon
 router.get('/:id',isAuth, getRegistrationById);
 
+
 //update a coupon
 router.put('/:id',isAuth, updateRegistration);
 

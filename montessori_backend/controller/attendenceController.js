@@ -6,10 +6,14 @@ const mongoose = require('mongoose');
 var ObjectId = require('mongodb').ObjectID;
 const { signInToken, tokenForVerify, sendEmail } = require('../config/auth');
 dayjs.extend(utc);
-
-
 const addAttendence = async (req, res) => {
     try {
+      const isDate = await Attendence.findOne({ "classId" : ObjectId(req.body.classId), date:req.body.date });
+      if (isDate) {
+        return res.status(403).send({
+          message: 'This Date Attendence is already Added!',
+        });
+      }
       const newAttendence = new Attendence(req.body);
       await newAttendence.save();
       res.status(200).send({
@@ -21,10 +25,6 @@ const addAttendence = async (req, res) => {
       });
     }
   };
-
-
-
-
 //   const loginStudent = async (req, res) => {
 //     try {
 //       const student = await student.findOne({ mobileNumber: req.body.mobileNumber });
@@ -47,16 +47,6 @@ const addAttendence = async (req, res) => {
 //       });
 //     }
 //   };
-  
-
-
-
-
-
-
-
-
-
 const addAllAttendence = async (req, res) => {
     try {
       await Attendence.insertMany(req.body);
@@ -69,12 +59,9 @@ const addAllAttendence = async (req, res) => {
       });
     }
   };
-
-
-
   const getAllAttendence = async (req, res) => {
     try {
-      const attendence = await Attendence.find({}).populate("schooleId").populate("studentId").populate("classId").populate("teacherId");
+      const attendence = await Attendence.find({}).populate("schooleId").populate("classId").populate("teacherId");
       res.send(attendence);
     } catch (err) {
       res.status(500).send({
@@ -87,6 +74,12 @@ const addAllAttendence = async (req, res) => {
     let preparePost ={};
     if(req.body.schooleId){
       preparePost = {"schooleId" : ObjectId(req.body.schooleId)};
+    }
+    if(req.body.date){
+      preparePost = {...preparePost,...{"date" :req.body.date}};
+    }
+    if(req.body.classId){
+      preparePost = {...preparePost,...{"classId" : ObjectId(req.body.classId)}};
     }
     try {
       const attendence = await Attendence.find(preparePost).populate("schooleId");
@@ -112,11 +105,9 @@ const addAllAttendence = async (req, res) => {
       const attendence = await Attendence.findById(req.params.id);
       if (attendence) {
         attendence.schooleId = req.body.schooleId;
-        attendence.studentId = req.body.studentId;
+        attendence.studentList = req.body.studentList;
         attendence.classId = req.body.classId;
         attendence.teacherId = req.body.teacherId;
-        attendence.status = req.body.status;
-        attendence.attendence = req.body.attendence;
         attendence.date = req.body.date;
         await attendence.save();
         res.send({ message: 'Attendence Updated Successfully!' });
@@ -146,5 +137,5 @@ const addAllAttendence = async (req, res) => {
     updateAttendence,
     deleteAttendence,
     findAttendenceList,
-    loginAttendence
+    
   };

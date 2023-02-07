@@ -13,8 +13,14 @@ router.post('/all',isAuth, addAllStudent);
 
 router.post('/find',isAuth, findStudentList);
 //get all coupon
-router.get('/',isAuth, getAllStudent);
+router.get('/list/:schooleId',isAuth, getAllStudent);
 
+
+
+  
+
+
+router.post('/list/:schooleId',isAuth, getAllStudent);
 //get a coupon
 router.get('/:id',isAuth, getStudentById);
 

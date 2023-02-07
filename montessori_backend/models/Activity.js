@@ -1,5 +1,4 @@
 const mongoose = require('mongoose');
-
 const activitySchema = new mongoose.Schema(
     {
         schooleId: {
@@ -12,28 +11,38 @@ const activitySchema = new mongoose.Schema(
             ref: "Class",
             required: true,
         },
-        status: {
-            type: Boolean,
-            required: true,
-        },
-        startDate: {
+        
+        academicYear : {
             type: String,
             required: true,
         },
-        endDate: {
+        studentId: {
+            type: mongoose.Schema.Types.ObjectId,
+            ref: "Student",
+            required: true,
+        },
+        subActivityId: {
+            type: mongoose.Schema.Types.ObjectId,
+            ref: "SubActivity",
+            required: true,
+        },
+        activityId: {
+            type: mongoose.Schema.Types.ObjectId,
+            ref: "ActivityTabel",
+            required: true,
+        },
+        remarks:{
             type: String,
             required: true,
         },
-       
-        description: {
+        authorizedPerson:{
             type: String,
             required: true,
         },
-        activityName: {
+        key:{
             type: String,
             required: true,
-        },
-   
+        }
      },
     {
         timestamps: true,

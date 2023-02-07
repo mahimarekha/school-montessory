@@ -44,15 +44,6 @@ const addAddClass = async (req, res) => {
 //     }
 //   };
   
-
-
-
-
-
-
-
-
-
 const addAllAddClass = async (req, res) => {
     try {
       await AddClass.insertMany(req.body);
@@ -68,7 +59,11 @@ const addAllAddClass = async (req, res) => {
 
   const getAllAddClass = async (req, res) => {
     try {
-      const addClass  = await AddClass .find({}).populate("schooleId");
+      let preparePost ={};
+       if(req.params.schooleId){
+        preparePost = {"schooleId" : ObjectId(req.params.schooleId)};
+      }
+      const addClass  = await AddClass .find(preparePost).populate("schooleId");
       res.send(addClass);
     } catch (err) {
       res.status(500).send({

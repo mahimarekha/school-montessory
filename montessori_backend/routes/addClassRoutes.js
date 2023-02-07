@@ -21,7 +21,7 @@ router.post('/all',isAuth, addAllAddClass);
 
 router.post('/find',isAuth, findAddClassList);
 //get all coupon
-router.get('/',isAuth, getAllAddClass);
+router.get('/list/:schooleId',isAuth, getAllAddClass);
 
 //get a coupon
 router.get('/:id',isAuth, getAddClassById);

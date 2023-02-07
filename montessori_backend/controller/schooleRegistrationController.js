@@ -10,36 +10,39 @@ dayjs.extend(utc);
 
 const addSchooleRegistration = async (req, res) => {
     try {
-      const isEmailAdded = await SchooleRegistration.findOne({ email: req.body.email });
+      const isEmailAdded = await SchooleRegistration.findOne({ schooleEmail: req.body.email });
       if (isEmailAdded) {
         return res.status(403).send({
           message: 'This Mobile or Email already Added!',
         });
       }else{
         req.body.password = bcrypt.hashSync(req.body.password);
+        req.body.roleType ="SCHOOLE";
         const newSchooleRegistration= new SchooleRegistration(req.body);
         await newSchooleRegistration.save();
         res.send({ message: 'SchooleRegistration Added Successfully!' });
       }
-      
     } catch (err) {
       res.status(500).send({ message: err.message });
     }
   };
   const loginSchooleRegistration = async (req, res) => {
     try {
-     
-      const schooleRegistration = await SchooleRegistration.findOne({ email: req.body.email });
+  
+      const schooleRegistration = await SchooleRegistration.findOne({ schooleEmail: req.body.email });
+      console.log(schooleRegistration)
       if (schooleRegistration && bcrypt.compareSync(req.body.password, schooleRegistration.password)) {
         const token = signInToken(schooleRegistration);
         res.send({
           token,
-          email:schooleRegistration.email,
-          _id : schooleRegistration._id
+          email:schooleRegistration.schooleEmail,
+          _id : schooleRegistration._id,
+          role:schooleRegistration.roleType,
+          schoolId:schooleRegistration._id
         });
       } else {
         res.status(401).send({
-          message: 'Invalid Email or password!',
+          message: 'Invalid Emails or password!',
         });
       }
     } catch (err) {
@@ -70,9 +73,7 @@ const addSchooleRegistration = async (req, res) => {
       });
     }
   };
-
 const findSchooleRegistrationList=async(req, res)=>{
- 
   let preparePost ={};
   if(req.body.localityId){
     preparePost = {...preparePost,...{"localityId" : ObjectId(req.body.localityId)}}
@@ -113,9 +114,6 @@ const findSchooleRegistrationList=async(req, res)=>{
         schooleRegistration.mobileNumber = req.body.mobileNumber;
         schooleRegistration.schooleEmail = req.body.schooleEmail;
         schooleRegistration.schooleContact = req.body.schooleContact;
-        schooleRegistration.password = req.body.password;
-       
-       
         await schooleRegistration.save();
         res.send({ message: 'schooleRegistration Updated Successfully!' });
       }

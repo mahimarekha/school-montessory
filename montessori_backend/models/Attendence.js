@@ -7,11 +7,7 @@ const attendenceSchema = new mongoose.Schema(
             ref: "SchooleRegistration",
             required: true,
         },
-        studentId: {
-            type: mongoose.Schema.Types.ObjectId,
-            ref: "Student",
-            required: true,
-        },
+        studentList: [{}],
         classId: {
             type: mongoose.Schema.Types.ObjectId,
             ref: "Class",
@@ -20,14 +16,6 @@ const attendenceSchema = new mongoose.Schema(
         teacherId: {
             type: mongoose.Schema.Types.ObjectId,
             ref: "Teacher",
-            required: true,
-        },
-        status: {
-            type: Boolean,
-            required: true,
-        },
-        attendence: {
-            type: String,
             required: true,
         },
         date: {

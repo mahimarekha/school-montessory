@@ -15,7 +15,8 @@ const addTeacher = async (req, res) => {
           message: 'This Mobile or Email already Added!',
         });
       }else{
-      //  req.body.password = bcrypt.hashSync(req.body.password);
+      req.body.password = bcrypt.hashSync(req.body.password);
+      req.body.roleType ="TEACHER";
         const newTeacher= new Teacher(req.body);
         await newTeacher.save();
         res.send({ message: 'Teacher Added Successfully!' });
@@ -27,7 +28,7 @@ const addTeacher = async (req, res) => {
   };
   const loginTeacher = async (req, res) => {
     try {
-      const teacher = await Teacher.findOne({ mobileNumber: req.body.mobileNumber });
+      const teacher = await Teacher.findOne({ email: req.body.email });
       if (teacher && bcrypt.compareSync(req.body.password, teacher.password)) {
         const token = signInToken(teacher);
         res.send({
@@ -36,6 +37,8 @@ const addTeacher = async (req, res) => {
           name: teacher.orgName,
           phone: teacher.mobileNumber,
           email:teacher.email,
+          role:teacher.roleType,
+          schoolId:teacher.schooleId
         });
       } else {
         res.status(401).send({
@@ -60,12 +63,11 @@ const addTeacher = async (req, res) => {
       });
     }
   };
-
   const getAllTeacher = async (req, res) => {
     try {
       let preparePost ={};
-      if(req.body.schooleId){
-        preparePost = {"schooleId" : ObjectId(req.body.schooleId)};
+      if(req.params.schooleId){
+        preparePost = {"schooleId" : ObjectId(req.params.schooleId)};
       }
       const teacher = await Teacher.find(preparePost).populate("schooleId").populate("classId");
       res.send(teacher);
@@ -75,7 +77,6 @@ const addTeacher = async (req, res) => {
       });
     }
   };
-
 const findTeacherList=async(req, res)=>{
   let preparePost ={};
   if(req.body.schooleId){
@@ -108,7 +109,6 @@ const findTeacherList=async(req, res)=>{
         teacher.schooleId = req.body.schooleId;
         teacher.status = req.body.status;
         teacher.email = req.body.email;
-        teacher.password = req.body.password;
         teacher.subject = req.body.subject;
         teacher.qualification = req.body.qualification;
         teacher.address=req.body.address;

@@ -52,6 +52,10 @@ const schooleRegistrationSchema = new mongoose.Schema(
             type: String,
             required: true,
         },
+        roleType:{
+            type: String,
+            required: true,
+        },
         subscription:{
             type: String,
             required: true,

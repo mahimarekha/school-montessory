@@ -14,12 +14,13 @@ router.post('/all',isAuth, addAllActivity);
 
 router.post('/find',isAuth, findActivityList);
 //get all coupon
-router.get('/',isAuth, getAllActivity);
+router.get('/list/:schooleId',isAuth, getAllActivity);
 
 //get a coupon
 router.get('/:id',isAuth, getActivityById);
 
 //update a coupon
+
 router.put('/:id',isAuth, updateActivity);
 
 //delete a coupon

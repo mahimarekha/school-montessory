@@ -20,7 +20,10 @@ const teacherSchema = new mongoose.Schema(
             type: String,
             required: true,
         },
-      
+        password:{
+            type: String,
+            required: true,
+        },
         subject: {
             type: String,
             required: true,
@@ -42,6 +45,10 @@ const teacherSchema = new mongoose.Schema(
             required: true,
         },
         teacherName:{
+            type: String,
+            required: true,
+        },
+        roleType:{
             type: String,
             required: true,
         }

@@ -1,6 +1,5 @@
 require('dotenv').config();
-const multer  = require('multer');
-const {GridFsStorage} = require('multer-gridfs-storage');
+
 var fs = require('fs');
 const express = require('express');
 const cors = require('cors');
@@ -12,23 +11,17 @@ const connectDB = require('../config/db');
 const userRoutes = require('../routes/userRoutes');
 const adminRoutes = require('../routes/adminRoutes');
 const registrationRoutes = require('../routes/schooleRegistrationRoutes');
+const calelnderEventsRoutes =require('../routes/calenderEventsRoutes');
+const activityTabelRoutes = require('../routes/activityTabelRoutes')
+const subActivityRoutes = require('../routes/subActivityRoutes')
 const studentRouter =require('../routes/studentRoutes')
 const  addClassRoutes =require('../routes/addClassRoutes')
 const  teacherRoutes =require('../routes/teacherRoutes')
 const activityRoutes =require('../routes/activityRoutes')
+const attendenceRoutes =require('../routes/attendenceRoutes')
 const { isAuth, isAdmin } = require('../config/auth');
-// const { default: SchooleRegistration } = require('../../montessori/src/pages/dashboard/SchoolRegistration');
-const storage = new GridFsStorage({ url: process.env.MONGO_URI, file: (req, file) => {
-  return new Promise((resolve, reject) => {
-    const filename = Date.now()+"_"+file.originalname;
-    const fileInfo = {
-      filename: filename,
-      bucketName: "newBucket"
-    };
-    resolve(fileInfo);
-  });
-}});
-const upload = multer({ storage });
+
+
 connectDB();
 const app = express();
 // We are using this for the express-rate-limit middleware
@@ -63,11 +56,7 @@ app.use('/client', (req, res) => {
 //this for route will need for store front, also for admin dashboard
 // app.use('/api/products/', productRoutes);
 
-app.post('/api/image/upload', upload.single('image'), (req, res, next) => { 
-  
-  res.status(200).send(req.file);
- 
-});
+
 app.get("/api/image/download/:filename", (req, res) => {
   const file = bucket
     .find({
@@ -94,8 +83,12 @@ app.use('/api/admin/', adminRoutes);
 app.use('/api/addclass', addClassRoutes);
 app.use('/api/teacher', teacherRoutes);
 app.use('/api/activity', activityRoutes)
+app.use('/api/calelnderevents', calelnderEventsRoutes)
+app.use('/api/attendence', attendenceRoutes)
 app.use('/api/registration', registrationRoutes);
 app.use('/api/student', studentRouter)
+app.use('/api/activitytabel', activityTabelRoutes )
+app.use('/api/subactivity', subActivityRoutes)
 app.use((err, req, res, next) => {
   if (res.headersSent) return next(err);
   res.status(400).json({ message: err.message });
